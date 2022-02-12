@@ -2,9 +2,11 @@
 const grocerySubmit = document.getElementById('addGrocery')
 const list = document.getElementById('list')
 const clearBtn = document.getElementById('clear')
-let store = Redux.createStore(groceryReducer)
 
-// establish the reducer. Takes initial state value and an action as arguments.
+const initialState = {
+    groceries: []
+}
+
 const groceryReducer = (state = initialState.groceries, action) => {
     switch (action.type) {
         case 'grocery/add':
@@ -21,28 +23,9 @@ const groceryReducer = (state = initialState.groceries, action) => {
     }
 }
 
-// Instantiate default state value:
-const initialState = {
-    groceries: []
-}
-const newGrocery = (e) => {
-    e.preventDefault()
-    let groceryText = document.getElementById('newItem').value
-    store.dispatch({
-        type: 'grocery/add',
-        text: groceryText
-    })
-    console.log(store.getState())
-}
-grocerySubmit.addEventListener('submit', (e) => { newGrocery(e) })
-clearBtn.addEventListener('click', clearList)
 
-const clearList = () => {
-    document.getElementById('newItem').value = ''
-    store.dispatch({
-        type: 'grocery/clear'
-    })
-}
+let store = Redux.createStore(groceryReducer)
+
 const renderList = (state) => {
     while (list.firstChild) {
         list.removeChild(list.firstChild)
@@ -53,9 +36,30 @@ const renderList = (state) => {
         li.textContent = grocery.text
     })
 }
+
+const newGrocery = (e) => {
+    e.preventDefault()
+    let groceryText = document.getElementById('newItem').value
+    store.dispatch({
+        type: 'grocery/add',
+        text: groceryText
+    })
+    console.log(store.getState())
+}
+
+const clearList = () => {
+    document.getElementById('newItem').value = ''
+    store.dispatch({
+        type: 'grocery/clear'
+    })
+}
+
 const render = () => {
     const state = store.getState()
     renderList(state)
 }
+
+grocerySubmit.addEventListener('submit', (e) => { newGrocery(e) })
+clearBtn.addEventListener('click', clearList)
 
 store.subscribe(render)
